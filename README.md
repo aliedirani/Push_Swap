@@ -152,7 +152,6 @@ The tester prints `p50`, `p95`, `p99`, an operation-mix summary, and can hand th
 
 - [Defense guide](DEFENSE.md) for evaluator questions, edge cases, and speaking points
 - [Rendered Mermaid diagrams](pushswap_structure.md) for the mandatory flow, butterfly detail, module map, data layout, and checker sequence
-- [Raw Mermaid flow source](pushswap_structure.mermaid) if you want the original editable diagram file
 
 ---
 
@@ -273,7 +272,6 @@ echo "spin" | ./checker 2 1 3
 |   `-- visualizer-preview.svg
 |-- DEFENSE.md
 |-- pushswap_structure.md
-|-- pushswap_structure.mermaid
 |-- push_swap.h
 |-- push_swap_bonus.h
 |
