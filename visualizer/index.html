@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>push_swap Visualizer</title>
+	<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+	<div class="page-shell">
+		<header class="hero">
+			<div class="hero-copy">
+				<p class="eyebrow">push_swap playground</p>
+				<h1>Watch the stacks dance.</h1>
+				<p class="lede">
+					Load a trace, step through every move, and hear tiny sound cues while
+					stack A and stack B reshuffle themselves into order.
+				</p>
+			</div>
+			<div class="hero-card">
+				<div class="hero-badge">Visualizer</div>
+				<p>Built for this repository's exact operation set and butterfly flow.</p>
+				<div class="hero-pill-row">
+					<span>sa/sb/ss</span>
+					<span>pa/pb</span>
+					<span>ra/rb/rr</span>
+					<span>rra/rrb/rrr</span>
+				</div>
+			</div>
+		</header>
+
+		<main class="layout">
+			<section class="panel controls-panel">
+				<div class="panel-head">
+					<h2>Trace loader</h2>
+					<p>Paste values and operations or load a JSON trace exported by the tester.</p>
+				</div>
+
+				<div class="field-grid">
+					<label class="field">
+						<span>Input values</span>
+						<textarea id="inputValues" rows="4" placeholder="Example: 3 2 1"></textarea>
+					</label>
+					<label class="field">
+						<span>Operations</span>
+						<textarea id="operations" rows="8" placeholder="Example:&#10;sa&#10;rra"></textarea>
+					</label>
+				</div>
+
+				<div class="toolbar">
+					<button id="loadManual" class="action-btn primary">Load manual trace</button>
+					<button id="loadSample" class="action-btn">Use sample</button>
+					<label class="upload-btn">
+						<input id="traceFile" type="file" accept=".json">
+						<span>Import JSON trace</span>
+					</label>
+				</div>
+
+				<div class="tester-box">
+					<h3>How to test your real binary</h3>
+					<pre><code>node tools/push_swap_tester.mjs --push-swap ./push_swap --checker ./checker --size 100 --runs 50
+node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sample_trace.json</code></pre>
+				</div>
+			</section>
+
+			<section class="panel stage-panel">
+				<div class="panel-head">
+					<h2>Live stacks</h2>
+					<p>Top of each stack is shown at the top. Colors follow normalized rank.</p>
+				</div>
+
+				<div class="status-strip">
+					<div class="status-card">
+						<span class="label">Current step</span>
+						<strong id="stepValue">0 / 0</strong>
+					</div>
+					<div class="status-card">
+						<span class="label">Current move</span>
+						<strong id="moveValue">ready</strong>
+					</div>
+					<div class="status-card">
+						<span class="label">Status</span>
+						<strong id="sortedValue">not loaded</strong>
+					</div>
+				</div>
+
+				<div class="stack-stage">
+					<div class="stack-column">
+						<div class="stack-title">Stack A</div>
+						<div id="stackA" class="stack-box"></div>
+					</div>
+					<div class="stack-column">
+						<div class="stack-title">Stack B</div>
+						<div id="stackB" class="stack-box"></div>
+					</div>
+				</div>
+
+				<div class="transport">
+					<button id="toStart" class="transport-btn">|&lt;</button>
+					<button id="prevStep" class="transport-btn">&lt;</button>
+					<button id="playPause" class="transport-btn accent">Play</button>
+					<button id="nextStep" class="transport-btn">&gt;</button>
+					<button id="toEnd" class="transport-btn">&gt;|</button>
+					<label class="inline-range">
+						<span>Speed</span>
+						<input id="speed" type="range" min="80" max="1200" value="400" step="20">
+					</label>
+					<button id="soundToggle" class="transport-btn">Sound on</button>
+				</div>
+			</section>
+
+			<section class="panel op-panel">
+				<div class="panel-head">
+					<h2>Move timeline</h2>
+					<p>The current operation is highlighted while you scrub through the trace.</p>
+				</div>
+				<div id="opTimeline" class="op-timeline"></div>
+			</section>
+		</main>
+	</div>
+
+	<script type="module" src="./app.js"></script>
+</body>
+</html>

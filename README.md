@@ -23,6 +23,11 @@
   <code>checker</code>, built in C as part of the 42 curriculum.
 </p>
 
+<p>
+  It also comes with a <strong>CLI tester</strong> and a small <strong>interactive visualizer</strong>
+  so visitors can actually see the moves instead of only reading about them.
+</p>
+
 </div>
 
 ---
@@ -80,6 +85,47 @@ ARG="4 67 3 87 23"
 | `make clean` | Remove object files |
 | `make fclean` | Remove object files and binaries |
 | `make re` | Rebuild from scratch |
+
+---
+
+## Tester and visualizer
+
+This repo also ships with two small helper tools, so the project feels closer to a tiny lab than a plain source dump:
+
+| Tool | Purpose |
+|------|---------|
+| `tools/push_swap_tester.mjs` | Runs random test batches, counts operations, validates output with `checker`, and can export a JSON trace |
+| `visualizer/index.html` | Opens a browser-based stack visualizer with step controls, autoplay, and tiny sound effects |
+
+![push_swap visualizer preview](assets/visualizer-preview.svg)
+
+### Why it is fun
+
+- You can stress-test the binary with random batches and get operation-count summaries quickly.
+- You can export a trace from the tester and replay it visually in the browser.
+- You can step move by move, autoplay the whole trace, or scrub directly to the operation you care about.
+- The visualizer adds tiny sound cues and a completion jingle, which makes demos feel much more alive.
+
+### CLI tester
+
+```bash
+node tools/push_swap_tester.mjs --push-swap ./push_swap --checker ./checker --size 100 --runs 50
+node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sample_trace.json
+```
+
+### Visualizer
+
+Open `visualizer/index.html` in a browser, then:
+
+1. paste input values and operations manually, or
+2. import a JSON trace exported by the tester, or
+3. load the built-in sample trace
+
+### Quick visualizer flow
+
+```text
+push_swap -> operations -> tester export -> visualizer import -> animated replay
+```
 
 ---
 
@@ -203,6 +249,8 @@ echo "spin" | ./checker 2 1 3
 .
 |-- Makefile
 |-- README.md
+|-- assets
+|   `-- visualizer-preview.svg
 |-- push_swap.h
 |-- push_swap_bonus.h
 |
@@ -239,7 +287,16 @@ echo "spin" | ./checker 2 1 3
 |
 |-- checker_bonus.c
 |-- checker_read_bonus.c
-`-- checker_exec_bonus.c
+|-- checker_exec_bonus.c
+|
+|-- tools
+|   `-- push_swap_tester.mjs
+|
+`-- visualizer
+    |-- index.html
+    |-- app.js
+    |-- styles.css
+    `-- sample_trace.json
 ```
 
 </details>

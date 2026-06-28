@@ -1,0 +1,8 @@
+{
+  "title": "Sample push_swap trace",
+  "input": [3, 2, 1],
+  "operations": ["sa", "rra"],
+  "meta": {
+    "note": "Tiny built-in demo trace for the visualizer."
+  }
+}

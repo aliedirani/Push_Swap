@@ -1,0 +1,137 @@
+<svg width="1400" height="820" viewBox="0 0 1400 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="150" y1="40" x2="1200" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102033"/>
+      <stop offset="0.5" stop-color="#18435D"/>
+      <stop offset="1" stop-color="#F1DFC3"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#FFF8EC" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#F8EDDB" stop-opacity="0.94"/>
+    </linearGradient>
+    <linearGradient id="accentA" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F4605A"/>
+      <stop offset="1" stop-color="#FF9B73"/>
+    </linearGradient>
+    <linearGradient id="accentB" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#147D92"/>
+      <stop offset="1" stop-color="#49C7B2"/>
+    </linearGradient>
+    <linearGradient id="stack1" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F15D55"/>
+      <stop offset="1" stop-color="#FF8C78"/>
+    </linearGradient>
+    <linearGradient id="stack2" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F1AB3F"/>
+      <stop offset="1" stop-color="#F6D46F"/>
+    </linearGradient>
+    <linearGradient id="stack3" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#2E8A6B"/>
+      <stop offset="1" stop-color="#5ED39B"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1400" height="820" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="28" stdDeviation="28" flood-color="#03101D" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="820" rx="38" fill="url(#bg)"/>
+  <circle cx="181" cy="118" r="106" fill="#F4605A" fill-opacity="0.18"/>
+  <circle cx="1193" cy="132" r="92" fill="#46C8B2" fill-opacity="0.16"/>
+  <circle cx="1240" cy="710" r="140" fill="#FFF6DC" fill-opacity="0.18"/>
+
+  <g filter="url(#shadow)">
+    <rect x="54" y="54" width="1292" height="712" rx="34" fill="#FFF8ED" fill-opacity="0.1"/>
+  </g>
+
+  <rect x="84" y="74" width="744" height="180" rx="28" fill="url(#panel)" stroke="white" stroke-opacity="0.26"/>
+  <text x="124" y="126" fill="#1B3450" font-family="Georgia, serif" font-size="26" letter-spacing="7">PUSH_SWAP PLAYGROUND</text>
+  <text x="124" y="188" fill="#122134" font-family="Georgia, serif" font-size="60" font-weight="700">Watch the stacks dance.</text>
+  <text x="124" y="228" fill="#536170" font-family="'Trebuchet MS', sans-serif" font-size="24">
+    Load moves, scrub through every step, and hear tiny sound cues while stack A
+  </text>
+  <text x="124" y="258" fill="#536170" font-family="'Trebuchet MS', sans-serif" font-size="24">
+    and stack B fold back into order.
+  </text>
+
+  <rect x="861" y="74" width="455" height="180" rx="28" fill="url(#panel)" stroke="white" stroke-opacity="0.26"/>
+  <rect x="894" y="106" width="118" height="36" rx="18" fill="#F4605A" fill-opacity="0.12"/>
+  <text x="921" y="130" fill="#D94A42" font-family="'Trebuchet MS', sans-serif" font-size="19" font-weight="700">Visualizer</text>
+  <text x="894" y="179" fill="#263242" font-family="Georgia, serif" font-size="31" font-weight="700">Live stacks + sound</text>
+  <text x="894" y="213" fill="#536170" font-family="'Trebuchet MS', sans-serif" font-size="22">
+    Manual traces, JSON imports,
+  </text>
+  <text x="894" y="241" fill="#536170" font-family="'Trebuchet MS', sans-serif" font-size="22">
+    autoplay, and little audio pops.
+  </text>
+
+  <rect x="84" y="284" width="372" height="430" rx="30" fill="url(#panel)" stroke="white" stroke-opacity="0.28"/>
+  <text x="118" y="336" fill="#192332" font-family="Georgia, serif" font-size="33" font-weight="700">Trace loader</text>
+  <text x="118" y="368" fill="#657181" font-family="'Trebuchet MS', sans-serif" font-size="20">Paste values and moves or import tester JSON.</text>
+
+  <text x="118" y="420" fill="#304150" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">Input values</text>
+  <rect x="118" y="438" width="304" height="72" rx="18" fill="white" fill-opacity="0.92" stroke="#D8D0C2"/>
+  <text x="138" y="482" fill="#4F5A67" font-family="'Courier New', monospace" font-size="24">3 2 1</text>
+
+  <text x="118" y="548" fill="#304150" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">Operations</text>
+  <rect x="118" y="566" width="304" height="112" rx="18" fill="white" fill-opacity="0.92" stroke="#D8D0C2"/>
+  <text x="138" y="610" fill="#4F5A67" font-family="'Courier New', monospace" font-size="24">sa</text>
+  <text x="138" y="644" fill="#4F5A67" font-family="'Courier New', monospace" font-size="24">rra</text>
+
+  <rect x="118" y="694" width="144" height="40" rx="20" fill="url(#accentA)"/>
+  <text x="145" y="720" fill="white" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">Load trace</text>
+  <rect x="278" y="694" width="144" height="40" rx="20" fill="#198A88" fill-opacity="0.14"/>
+  <text x="307" y="720" fill="#1A3136" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">Import JSON</text>
+
+  <rect x="488" y="284" width="828" height="430" rx="30" fill="url(#panel)" stroke="white" stroke-opacity="0.28"/>
+  <text x="522" y="336" fill="#192332" font-family="Georgia, serif" font-size="33" font-weight="700">Live stacks</text>
+  <text x="522" y="368" fill="#657181" font-family="'Trebuchet MS', sans-serif" font-size="20">Top is shown first. Colors follow normalized rank.</text>
+
+  <rect x="522" y="398" width="224" height="72" rx="22" fill="#FFF7EA" stroke="#E1D6C7"/>
+  <rect x="790" y="398" width="224" height="72" rx="22" fill="#FFF7EA" stroke="#E1D6C7"/>
+  <rect x="1058" y="398" width="224" height="72" rx="22" fill="#FFF7EA" stroke="#E1D6C7"/>
+  <text x="548" y="428" fill="#6B7682" font-family="'Trebuchet MS', sans-serif" font-size="14" letter-spacing="2">CURRENT STEP</text>
+  <text x="548" y="455" fill="#1A2430" font-family="'Trebuchet MS', sans-serif" font-size="27" font-weight="700">1 / 2</text>
+  <text x="816" y="428" fill="#6B7682" font-family="'Trebuchet MS', sans-serif" font-size="14" letter-spacing="2">CURRENT MOVE</text>
+  <text x="816" y="455" fill="#1A2430" font-family="'Courier New', monospace" font-size="27" font-weight="700">sa</text>
+  <text x="1084" y="428" fill="#6B7682" font-family="'Trebuchet MS', sans-serif" font-size="14" letter-spacing="2">STATUS</text>
+  <text x="1084" y="455" fill="#1A2430" font-family="'Trebuchet MS', sans-serif" font-size="27" font-weight="700">in progress</text>
+
+  <text x="552" y="518" fill="#293A46" font-family="'Trebuchet MS', sans-serif" font-size="22" font-weight="700">STACK A</text>
+  <text x="972" y="518" fill="#293A46" font-family="'Trebuchet MS', sans-serif" font-size="22" font-weight="700">STACK B</text>
+
+  <rect x="522" y="536" width="348" height="136" rx="24" fill="#FDF7ED" stroke="#E1D6C7"/>
+  <rect x="940" y="536" width="348" height="136" rx="24" fill="#FDF7ED" stroke="#E1D6C7"/>
+
+  <rect x="554" y="558" width="194" height="34" rx="17" fill="url(#stack1)"/>
+  <text x="575" y="581" fill="white" font-family="'Courier New', monospace" font-size="19" font-weight="700">2</text>
+  <rect x="554" y="602" width="228" height="34" rx="17" fill="url(#stack2)"/>
+  <text x="575" y="625" fill="white" font-family="'Courier New', monospace" font-size="19" font-weight="700">3</text>
+  <rect x="554" y="646" width="294" height="34" rx="17" fill="url(#stack3)"/>
+  <text x="575" y="669" fill="white" font-family="'Courier New', monospace" font-size="19" font-weight="700">1</text>
+
+  <text x="1086" y="614" text-anchor="middle" fill="#8C97A3" font-family="'Trebuchet MS', sans-serif" font-size="24" font-style="italic">empty</text>
+
+  <rect x="522" y="690" width="70" height="42" rx="21" fill="#15202E"/>
+  <text x="552" y="717" fill="white" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">|&lt;</text>
+  <rect x="606" y="690" width="70" height="42" rx="21" fill="#15202E"/>
+  <text x="636" y="717" fill="white" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">&lt;</text>
+  <rect x="690" y="690" width="104" height="42" rx="21" fill="url(#stack2)"/>
+  <text x="723" y="717" fill="#17212D" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">Play</text>
+  <rect x="808" y="690" width="70" height="42" rx="21" fill="#15202E"/>
+  <text x="838" y="717" fill="white" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">&gt;</text>
+  <rect x="892" y="690" width="70" height="42" rx="21" fill="#15202E"/>
+  <text x="921" y="717" fill="white" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">&gt;|</text>
+
+  <rect x="992" y="690" width="140" height="42" rx="21" fill="#198A88" fill-opacity="0.12"/>
+  <text x="1021" y="717" fill="#24333E" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">Speed</text>
+  <line x1="1080" y1="711" x2="1114" y2="711" stroke="#24333E" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="1098" cy="711" r="8" fill="#F4605A"/>
+
+  <rect x="1148" y="690" width="140" height="42" rx="21" fill="#15202E"/>
+  <text x="1183" y="717" fill="white" font-family="'Trebuchet MS', sans-serif" font-size="18" font-weight="700">Sound on</text>
+
+  <rect x="522" y="754" width="210" height="32" rx="16" fill="#198A88" fill-opacity="0.14"/>
+  <text x="551" y="775" fill="#1F353C" font-family="'Courier New', monospace" font-size="17" font-weight="700">1. sa</text>
+  <rect x="742" y="754" width="230" height="32" rx="16" fill="#F4605A"/>
+  <text x="773" y="775" fill="white" font-family="'Courier New', monospace" font-size="17" font-weight="700">2. rra</text>
+</svg>

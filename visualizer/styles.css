@@ -1,0 +1,455 @@
+:root {
+	--bg-top: #0f172a;
+	--bg-mid: #15364f;
+	--bg-bottom: #f3dfc1;
+	--panel: rgba(250, 244, 232, 0.9);
+	--panel-strong: rgba(255, 248, 236, 0.98);
+	--ink: #16202b;
+	--muted: #536170;
+	--accent: #f25c54;
+	--accent-deep: #d94841;
+	--gold: #e6a83f;
+	--teal: #1d8f8a;
+	--line: rgba(22, 32, 43, 0.12);
+	--shadow: 0 24px 60px rgba(4, 20, 36, 0.24);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	color: var(--ink);
+	font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+	background:
+		radial-gradient(circle at top left, rgba(242, 92, 84, 0.22), transparent 28%),
+		radial-gradient(circle at top right, rgba(29, 143, 138, 0.18), transparent 24%),
+		linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 40%, var(--bg-bottom) 100%);
+}
+
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0.14;
+	background-image:
+		linear-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.6) 1px, transparent 1px);
+	background-size: 22px 22px;
+}
+
+.page-shell {
+	position: relative;
+	padding: 40px 24px 64px;
+}
+
+.hero {
+	display: grid;
+	grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.9fr);
+	gap: 24px;
+	align-items: stretch;
+	max-width: 1280px;
+	margin: 0 auto 28px;
+}
+
+.hero-copy,
+.hero-card,
+.panel {
+	background: var(--panel);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.36);
+	box-shadow: var(--shadow);
+	border-radius: 28px;
+}
+
+.hero-copy {
+	padding: 32px;
+}
+
+.eyebrow {
+	margin: 0 0 12px;
+	font-size: 0.8rem;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: var(--teal);
+}
+
+.hero h1 {
+	margin: 0;
+	font-size: clamp(2.6rem, 4vw, 4.7rem);
+	line-height: 0.95;
+	font-family: Georgia, "Palatino Linotype", serif;
+}
+
+.lede {
+	margin: 18px 0 0;
+	max-width: 58ch;
+	font-size: 1.05rem;
+	line-height: 1.7;
+	color: var(--muted);
+}
+
+.hero-card {
+	padding: 28px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 16px;
+	background:
+		linear-gradient(180deg, rgba(255, 248, 236, 0.98), rgba(255, 238, 209, 0.96));
+}
+
+.hero-badge {
+	display: inline-flex;
+	align-self: flex-start;
+	padding: 8px 14px;
+	border-radius: 999px;
+	font-weight: 700;
+	font-size: 0.8rem;
+	background: rgba(242, 92, 84, 0.14);
+	color: var(--accent-deep);
+}
+
+.hero-pill-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.hero-pill-row span {
+	padding: 8px 12px;
+	border-radius: 999px;
+	background: rgba(29, 143, 138, 0.1);
+	font-size: 0.84rem;
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+	gap: 24px;
+	max-width: 1280px;
+	margin: 0 auto;
+}
+
+.controls-panel {
+	grid-row: span 2;
+}
+
+.op-panel {
+	grid-column: 2;
+}
+
+.panel {
+	padding: 24px;
+	background: var(--panel-strong);
+}
+
+.panel-head h2,
+.tester-box h3 {
+	margin: 0;
+	font-family: Georgia, "Palatino Linotype", serif;
+}
+
+.panel-head p,
+.tester-box p {
+	margin: 8px 0 0;
+	color: var(--muted);
+	line-height: 1.6;
+}
+
+.field-grid {
+	display: grid;
+	gap: 16px;
+	margin-top: 20px;
+}
+
+.field {
+	display: grid;
+	gap: 8px;
+	font-weight: 700;
+}
+
+.field span {
+	font-size: 0.92rem;
+}
+
+textarea {
+	width: 100%;
+	resize: vertical;
+	padding: 14px 16px;
+	border-radius: 18px;
+	border: 1px solid var(--line);
+	background: rgba(255, 255, 255, 0.92);
+	font: 0.95rem/1.5 "Consolas", "Courier New", monospace;
+	color: var(--ink);
+}
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 16px;
+}
+
+.action-btn,
+.upload-btn,
+.transport-btn {
+	border: none;
+	border-radius: 999px;
+	padding: 12px 16px;
+	font: 700 0.95rem/1 "Trebuchet MS", "Gill Sans", sans-serif;
+	cursor: pointer;
+	transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.action-btn,
+.upload-btn {
+	background: rgba(29, 143, 138, 0.12);
+	color: var(--ink);
+}
+
+.action-btn.primary {
+	background: linear-gradient(135deg, var(--accent), #ff856f);
+	color: white;
+}
+
+.upload-btn {
+	position: relative;
+	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+}
+
+.upload-btn input {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.action-btn:hover,
+.upload-btn:hover,
+.transport-btn:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+.tester-box {
+	margin-top: 22px;
+	padding: 18px;
+	border-radius: 22px;
+	background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(21, 54, 79, 0.92));
+	color: white;
+}
+
+.tester-box pre {
+	margin: 14px 0 0;
+	overflow-x: auto;
+	padding: 14px;
+	border-radius: 16px;
+	background: rgba(0, 0, 0, 0.22);
+	font: 0.88rem/1.55 "Consolas", "Courier New", monospace;
+}
+
+.status-strip {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.status-card {
+	padding: 14px 16px;
+	border-radius: 20px;
+	background: rgba(255, 248, 236, 0.95);
+	border: 1px solid rgba(22, 32, 43, 0.08);
+}
+
+.status-card .label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 0.78rem;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--muted);
+}
+
+.status-card strong {
+	font-size: 1.05rem;
+}
+
+.stack-stage {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
+	margin-top: 20px;
+}
+
+.stack-column {
+	min-width: 0;
+}
+
+.stack-title {
+	margin-bottom: 10px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.stack-box {
+	min-height: 420px;
+	padding: 16px;
+	border-radius: 26px;
+	background:
+		linear-gradient(180deg, rgba(255, 248, 236, 0.94), rgba(246, 234, 212, 0.98));
+	border: 1px solid rgba(22, 32, 43, 0.08);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.stack-item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 10px 14px;
+	border-radius: 16px;
+	min-height: 46px;
+	color: white;
+	font: 700 0.95rem/1 "Consolas", "Courier New", monospace;
+	overflow: hidden;
+	transform-origin: center;
+	animation: popIn 180ms ease;
+}
+
+.stack-item::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	opacity: 0.16;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9));
+}
+
+.stack-item span {
+	position: relative;
+	z-index: 1;
+}
+
+.stack-empty {
+	display: grid;
+	place-items: center;
+	flex: 1;
+	min-height: 180px;
+	border-radius: 20px;
+	border: 1px dashed rgba(22, 32, 43, 0.18);
+	color: var(--muted);
+	font-style: italic;
+}
+
+.transport {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.transport-btn {
+	background: rgba(15, 23, 42, 0.92);
+	color: white;
+	min-width: 62px;
+}
+
+.transport-btn.accent {
+	background: linear-gradient(135deg, var(--gold), #f4c96a);
+	color: var(--ink);
+}
+
+.inline-range {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	border-radius: 999px;
+	background: rgba(29, 143, 138, 0.08);
+}
+
+.inline-range span {
+	font-size: 0.9rem;
+	font-weight: 700;
+}
+
+.op-timeline {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.op-chip {
+	padding: 9px 12px;
+	border-radius: 999px;
+	background: rgba(21, 54, 79, 0.08);
+	font: 700 0.88rem/1 "Consolas", "Courier New", monospace;
+	color: var(--ink);
+	border: 1px solid transparent;
+}
+
+.op-chip.active {
+	background: linear-gradient(135deg, var(--accent), #ff8a78);
+	color: white;
+	border-color: rgba(255, 255, 255, 0.4);
+	box-shadow: 0 10px 22px rgba(242, 92, 84, 0.22);
+}
+
+.op-chip.done {
+	background: rgba(29, 143, 138, 0.14);
+}
+
+@keyframes popIn {
+	from {
+		opacity: 0;
+		transform: translateY(6px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@media (max-width: 1080px) {
+	.hero,
+	.layout {
+		grid-template-columns: 1fr;
+	}
+
+	.controls-panel,
+	.op-panel {
+		grid-column: auto;
+		grid-row: auto;
+	}
+}
+
+@media (max-width: 720px) {
+	.page-shell {
+		padding: 20px 14px 34px;
+	}
+
+	.hero-copy,
+	.hero-card,
+	.panel {
+		border-radius: 24px;
+	}
+
+	.stack-stage,
+	.status-strip {
+		grid-template-columns: 1fr;
+	}
+
+	.stack-box {
+		min-height: 260px;
+	}
+}
