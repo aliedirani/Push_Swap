@@ -94,8 +94,8 @@ This repo also ships with two small helper tools, so the project feels closer to
 
 | Tool | Purpose |
 |------|---------|
-| `tools/push_swap_tester.mjs` | Runs random test batches, counts operations, validates output with `checker`, and can export a JSON trace |
-| `visualizer/index.html` | Opens a browser-based stack visualizer with step controls, autoplay, and tiny sound effects |
+| `tools/push_swap_tester.mjs` | Runs test batches, prints percentile stats, grades 42 thresholds, and exports JSON or CSV evidence |
+| `visualizer/index.html` | Opens a browser-based stack visualizer with autoplay, scrubber controls, trace metadata, and tiny sound effects |
 
 ![push_swap visualizer preview](assets/visualizer-preview.svg)
 
@@ -103,14 +103,19 @@ This repo also ships with two small helper tools, so the project feels closer to
 
 - You can stress-test the binary with random batches and get operation-count summaries quickly.
 - You can export a trace from the tester and replay it visually in the browser.
+- You can export a full CSV batch when you want raw evidence for score tables or spreadsheets.
 - You can step move by move, autoplay the whole trace, or scrub directly to the operation you care about.
 - The visualizer adds tiny sound cues and a completion jingle, which makes demos feel much more alive.
+- The tester now supports presets, percentile stats, 42-style grading output, and worst-case trace export.
+- The visualizer now supports drag-and-drop import, keyboard shortcuts, a timeline scrubber, chunk-window hints, trace metadata, and a live operation histogram.
 
 ### CLI tester
 
 ```bash
 node tools/push_swap_tester.mjs --push-swap ./push_swap --checker ./checker --size 100 --runs 50
 node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sample_trace.json
+node tools/push_swap_tester.mjs --size 500 --runs 25 --grade --worst-trace visualizer/worst_trace.json
+node tools/push_swap_tester.mjs --size 100 --runs 50 --export-csv bench_100.csv
 ```
 
 ### Visualizer
@@ -126,6 +131,28 @@ Open `visualizer/index.html` in a browser, then:
 ```text
 push_swap -> operations -> tester export -> visualizer import -> animated replay
 ```
+
+### Benchmark recipe
+
+If you want a clean "show me the numbers" workflow on your own machine:
+
+```bash
+# 100-number batch with grading hints and a spreadsheet-friendly export
+node tools/push_swap_tester.mjs --size 100 --runs 50 --grade --export-csv bench_100.csv
+
+# 500-number batch plus a worst-case trace you can replay visually
+node tools/push_swap_tester.mjs --size 500 --runs 50 --grade --worst-trace visualizer/worst_trace.json
+```
+
+The tester prints `p50`, `p95`, `p99`, an operation-mix summary, and can hand the visualizer a best or worst trace with metadata attached.
+
+---
+
+## Architecture docs
+
+- [Defense guide](DEFENSE.md) for evaluator questions, edge cases, and speaking points
+- [Rendered Mermaid diagrams](pushswap_structure.md) for the mandatory flow, butterfly detail, module map, data layout, and checker sequence
+- [Raw Mermaid flow source](pushswap_structure.mermaid) if you want the original editable diagram file
 
 ---
 
@@ -233,13 +260,6 @@ echo "spin" | ./checker 2 1 3
 
 ---
 
-## Extra docs
-
-- [Defense guide](DEFENSE.md)
-- [Mermaid structure file](pushswap_structure.mermaid)
-
----
-
 ## Project map
 
 <details>
@@ -251,6 +271,9 @@ echo "spin" | ./checker 2 1 3
 |-- README.md
 |-- assets
 |   `-- visualizer-preview.svg
+|-- DEFENSE.md
+|-- pushswap_structure.md
+|-- pushswap_structure.mermaid
 |-- push_swap.h
 |-- push_swap_bonus.h
 |

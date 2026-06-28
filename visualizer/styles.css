@@ -194,6 +194,29 @@ textarea {
 	margin-top: 16px;
 }
 
+.drop-zone {
+	margin-top: 16px;
+	padding: 20px;
+	border-radius: 22px;
+	border: 2px dashed rgba(29, 143, 138, 0.32);
+	background: linear-gradient(180deg, rgba(29, 143, 138, 0.06), rgba(242, 92, 84, 0.06));
+	display: grid;
+	gap: 8px;
+	text-align: center;
+	color: var(--muted);
+	transition: border-color 140ms ease, transform 140ms ease, background 140ms ease;
+}
+
+.drop-zone strong {
+	color: var(--ink);
+}
+
+.drop-zone.active {
+	transform: translateY(-1px);
+	border-color: rgba(242, 92, 84, 0.64);
+	background: linear-gradient(180deg, rgba(242, 92, 84, 0.1), rgba(29, 143, 138, 0.1));
+}
+
 .action-btn,
 .upload-btn,
 .transport-btn {
@@ -256,7 +279,7 @@ textarea {
 
 .status-strip {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 12px;
 	margin-top: 18px;
 }
@@ -279,6 +302,22 @@ textarea {
 
 .status-card strong {
 	font-size: 1.05rem;
+}
+
+.chunk-info {
+	margin-top: 14px;
+	padding: 12px 16px;
+	border-radius: 18px;
+	background: linear-gradient(90deg, rgba(242, 92, 84, 0.1), rgba(29, 143, 138, 0.08));
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--ink);
+}
+
+.trace-meta {
+	margin: 10px 4px 0;
+	font-size: 0.92rem;
+	color: var(--muted);
 }
 
 .stack-stage {
@@ -338,6 +377,11 @@ textarea {
 	z-index: 1;
 }
 
+.stack-item.active-window {
+	outline: 2px dashed rgba(255, 255, 255, 0.7);
+	outline-offset: 2px;
+}
+
 .stack-empty {
 	display: grid;
 	place-items: center;
@@ -380,6 +424,85 @@ textarea {
 .inline-range span {
 	font-size: 0.9rem;
 	font-weight: 700;
+}
+
+.scrubber-wrap {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 14px;
+	margin-top: 14px;
+	padding: 12px 16px;
+	border-radius: 20px;
+	background: rgba(21, 54, 79, 0.08);
+}
+
+.scrubber-wrap span {
+	font-size: 0.92rem;
+	font-weight: 700;
+}
+
+.scrubber-wrap strong {
+	font-size: 0.95rem;
+}
+
+.shortcut-note {
+	margin: 12px 0 0;
+	color: var(--muted);
+	font-size: 0.92rem;
+}
+
+.shortcut-note code {
+	padding: 2px 6px;
+	border-radius: 999px;
+	background: rgba(21, 54, 79, 0.08);
+	color: var(--ink);
+}
+
+.op-histogram {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+	gap: 10px;
+	align-items: end;
+	margin-top: 18px;
+	padding: 14px;
+	border-radius: 22px;
+	background: linear-gradient(180deg, rgba(21, 54, 79, 0.08), rgba(29, 143, 138, 0.04));
+}
+
+.hist-col {
+	display: grid;
+	gap: 8px;
+	justify-items: center;
+}
+
+.hist-count {
+	font: 700 0.84rem/1 "Consolas", "Courier New", monospace;
+	color: var(--muted);
+}
+
+.hist-bar-shell {
+	width: 100%;
+	height: 120px;
+	padding: 8px;
+	display: flex;
+	align-items: flex-end;
+	border-radius: 18px;
+	background: rgba(255, 255, 255, 0.82);
+	border: 1px solid rgba(22, 32, 43, 0.08);
+}
+
+.hist-bar {
+	width: 100%;
+	border-radius: 12px;
+	background: linear-gradient(180deg, var(--gold), var(--accent));
+	min-height: 6px;
+	transition: height 140ms ease;
+}
+
+.hist-label {
+	font: 700 0.8rem/1 "Consolas", "Courier New", monospace;
+	color: var(--ink);
 }
 
 .op-timeline {
@@ -446,6 +569,10 @@ textarea {
 
 	.stack-stage,
 	.status-strip {
+		grid-template-columns: 1fr;
+	}
+
+	.scrubber-wrap {
 		grid-template-columns: 1fr;
 	}
 

@@ -56,10 +56,16 @@
 					</label>
 				</div>
 
+				<div id="dropZone" class="drop-zone">
+					<strong>Drop a trace JSON here</strong>
+					<span>Drag exported tester traces into this area for instant replay.</span>
+				</div>
+
 				<div class="tester-box">
 					<h3>How to test your real binary</h3>
 					<pre><code>node tools/push_swap_tester.mjs --push-swap ./push_swap --checker ./checker --size 100 --runs 50
-node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sample_trace.json</code></pre>
+node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sample_trace.json
+node tools/push_swap_tester.mjs --size 500 --runs 25 --grade --worst-trace visualizer/worst_trace.json</code></pre>
 				</div>
 			</section>
 
@@ -79,10 +85,17 @@ node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sam
 						<strong id="moveValue">ready</strong>
 					</div>
 					<div class="status-card">
+						<span class="label">Progress</span>
+						<strong id="progressValue">0%</strong>
+					</div>
+					<div class="status-card">
 						<span class="label">Status</span>
 						<strong id="sortedValue">not loaded</strong>
 					</div>
 				</div>
+
+				<div id="chunkInfo" class="chunk-info">Waiting for a trace...</div>
+				<p id="traceMeta" class="trace-meta">Built-in sample trace ready to explore.</p>
 
 				<div class="stack-stage">
 					<div class="stack-column">
@@ -107,13 +120,22 @@ node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sam
 					</label>
 					<button id="soundToggle" class="transport-btn">Sound on</button>
 				</div>
+
+				<label class="scrubber-wrap">
+					<span>Timeline scrubber</span>
+					<input id="scrubber" type="range" min="0" max="0" value="0" step="1">
+					<strong id="scrubberLabel">0%</strong>
+				</label>
+
+				<p class="shortcut-note">Shortcuts: <code>Space</code> play/pause, <code>←</code>/<code>→</code> step, <code>R</code> reset.</p>
 			</section>
 
 			<section class="panel op-panel">
 				<div class="panel-head">
-					<h2>Move timeline</h2>
-					<p>The current operation is highlighted while you scrub through the trace.</p>
+					<h2>Move timeline + histogram</h2>
+					<p>The current operation is highlighted while you scrub, and the histogram shows which moves dominate the trace.</p>
 				</div>
+				<div id="opHistogram" class="op-histogram"></div>
 				<div id="opTimeline" class="op-timeline"></div>
 			</section>
 		</main>

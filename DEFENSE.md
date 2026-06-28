@@ -25,6 +25,20 @@ The project is judged on:
 
 ---
 
+## 1.1 Complexity cheat sheet
+
+| Area | Practical complexity | Why |
+|------|----------------------|-----|
+| Parsing | O(n^2) | Duplicate detection compares pairs |
+| Indexing | O(n^2) | `assign_index` repeatedly scans for the next minimum |
+| Small sorts | O(1) | Fixed-size cases with hard-coded logic |
+| Butterfly sort | O(n^2) practical | Repeated scans, rotations, and max lookups in linked lists |
+| Checker replay | O(m * n) practical | `m` operations applied over linked-list stacks |
+
+This is the short answer to give if an evaluator suddenly asks for the big picture.
+
+---
+
 ## 2. The 11 allowed operations
 
 ```text
@@ -145,6 +159,21 @@ That means valid `INT_MIN` input is accepted.
 - frees both stacks
 - prints `Error\n` to `stderr`
 - exits with code `1`
+
+---
+
+## 4.1 Edge case quick table
+
+| Case | Expected behavior |
+|------|-------------------|
+| No arguments | Exit silently |
+| One element | No operations printed |
+| Already sorted input | No operations printed |
+| Duplicate values | `Error` |
+| Non-numeric token | `Error` |
+| Empty quoted string | `Error` |
+| `INT_MIN` and `INT_MAX` together | Accepted |
+| Empty line in checker input | `Error` |
 
 ---
 
