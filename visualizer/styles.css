@@ -126,6 +126,30 @@ body::before {
 	font-size: 0.84rem;
 }
 
+.server-pill {
+	display: inline-flex;
+	align-self: flex-start;
+	padding: 8px 14px;
+	border-radius: 999px;
+	font-weight: 700;
+	font-size: 0.82rem;
+}
+
+.server-pill.checking {
+	background: rgba(22, 32, 43, 0.08);
+	color: var(--muted);
+}
+
+.server-pill.online {
+	background: rgba(29, 143, 138, 0.14);
+	color: var(--teal);
+}
+
+.server-pill.offline {
+	background: rgba(242, 92, 84, 0.14);
+	color: var(--accent-deep);
+}
+
 .layout {
 	display: grid;
 	grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
@@ -185,6 +209,22 @@ textarea {
 	background: rgba(255, 255, 255, 0.92);
 	font: 0.95rem/1.5 "Consolas", "Courier New", monospace;
 	color: var(--ink);
+}
+
+.text-input,
+.select-input {
+	width: 100%;
+	padding: 12px 14px;
+	border-radius: 14px;
+	border: 1px solid var(--line);
+	background: rgba(255, 255, 255, 0.92);
+	font: 0.95rem/1.4 "Consolas", "Courier New", monospace;
+	color: var(--ink);
+}
+
+.select-input {
+	font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+	cursor: pointer;
 }
 
 .toolbar {
@@ -275,6 +315,77 @@ textarea {
 	border-radius: 16px;
 	background: rgba(0, 0, 0, 0.22);
 	font: 0.88rem/1.55 "Consolas", "Courier New", monospace;
+}
+
+.live-card {
+	margin-top: 20px;
+	padding: 18px;
+	border-radius: 22px;
+	background: linear-gradient(180deg, rgba(29, 143, 138, 0.12), rgba(21, 54, 79, 0.08));
+	border: 1px solid rgba(29, 143, 138, 0.18);
+}
+
+.live-card.is-hidden {
+	display: none;
+}
+
+.live-status {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+.live-status h3 {
+	margin: 0;
+	font-family: Georgia, "Palatino Linotype", serif;
+}
+
+.live-status p {
+	margin: 8px 0 0;
+	color: var(--muted);
+	line-height: 1.55;
+}
+
+.live-status strong {
+	padding: 7px 12px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.82);
+	font-size: 0.82rem;
+	white-space: nowrap;
+}
+
+.live-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	margin-top: 16px;
+}
+
+.live-field {
+	margin-top: 14px;
+}
+
+.live-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 14px;
+}
+
+.live-message {
+	margin: 14px 0 0;
+	color: var(--muted);
+	font-size: 0.92rem;
+	line-height: 1.5;
+}
+
+.live-message.is-good {
+	color: var(--teal);
+}
+
+.live-message.is-bad {
+	color: var(--accent-deep);
 }
 
 .status-strip {
@@ -568,7 +679,8 @@ textarea {
 	}
 
 	.stack-stage,
-	.status-strip {
+	.status-strip,
+	.live-grid {
 		grid-template-columns: 1fr;
 	}
 

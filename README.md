@@ -90,12 +90,13 @@ ARG="4 67 3 87 23"
 
 ## Tester and visualizer
 
-This repo also ships with two small helper tools, so the project feels closer to a tiny lab than a plain source dump:
+This repo also ships with a small local toolchain, so the project feels closer to a tiny lab than a plain source dump:
 
 | Tool | Purpose |
 |------|---------|
-| `tools/push_swap_tester.mjs` | Runs test batches, prints percentile stats, grades 42 thresholds, and exports JSON or CSV evidence |
-| `visualizer/index.html` | Opens a browser-based stack visualizer with autoplay, scrubber controls, trace metadata, and tiny sound effects |
+| `tools/push_swap_tester.mjs` | Runs test batches, prints percentile stats, grades 42 thresholds, exports JSON or CSV evidence, and now has terminal debug mode |
+| `tools/visualizer_server.mjs` | Serves the visualizer, runs `push_swap` on demand, and exposes live `/status`, `/generate`, and `/run` endpoints |
+| `visualizer/index.html` | Opens a browser-based stack visualizer with autoplay, scrubber controls, trace metadata, and live server controls |
 
 ![push_swap visualizer preview](assets/visualizer-preview.svg)
 
@@ -103,11 +104,27 @@ This repo also ships with two small helper tools, so the project feels closer to
 
 - You can stress-test the binary with random batches and get operation-count summaries quickly.
 - You can export a trace from the tester and replay it visually in the browser.
+- You can serve the visualizer locally and run the real binary straight from the browser with the live bridge.
 - You can export a full CSV batch when you want raw evidence for score tables or spreadsheets.
 - You can step move by move, autoplay the whole trace, or scrub directly to the operation you care about.
 - The visualizer adds tiny sound cues and a completion jingle, which makes demos feel much more alive.
-- The tester now supports presets, percentile stats, 42-style grading output, and worst-case trace export.
-- The visualizer now supports drag-and-drop import, keyboard shortcuts, a timeline scrubber, chunk-window hints, trace metadata, and a live operation histogram.
+- The tester now supports presets, percentile stats, 42-style grading output, worst-case trace export, and animated terminal debug mode.
+- The visualizer now supports drag-and-drop import, keyboard shortcuts, a timeline scrubber, chunk-window hints, trace metadata, a live operation histogram, and browser-side live runs.
+
+### Live visualizer quickstart
+
+```bash
+# 1. build your binary
+make
+
+# 2. start the local bridge
+node tools/visualizer_server.mjs
+
+# 3. open the browser UI
+# http://127.0.0.1:3000
+```
+
+When the bridge is online the visualizer shows a live badge and unlocks the `Generate & Run` panel.
 
 ### CLI tester
 
@@ -116,6 +133,7 @@ node tools/push_swap_tester.mjs --push-swap ./push_swap --checker ./checker --si
 node tools/push_swap_tester.mjs --size 20 --runs 1 --export-trace visualizer/sample_trace.json
 node tools/push_swap_tester.mjs --size 500 --runs 25 --grade --worst-trace visualizer/worst_trace.json
 node tools/push_swap_tester.mjs --size 100 --runs 50 --export-csv bench_100.csv
+node tools/push_swap_tester.mjs --debug --debug-input "5 1 4 2 3"
 ```
 
 ### Visualizer
@@ -311,7 +329,8 @@ echo "spin" | ./checker 2 1 3
 |-- checker_exec_bonus.c
 |
 |-- tools
-|   `-- push_swap_tester.mjs
+|   |-- push_swap_tester.mjs
+|   `-- visualizer_server.mjs
 |
 `-- visualizer
     |-- index.html

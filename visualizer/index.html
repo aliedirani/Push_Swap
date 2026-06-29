@@ -20,6 +20,7 @@
 			<div class="hero-card">
 				<div class="hero-badge">Visualizer</div>
 				<p>Built for this repository's exact operation set and butterfly flow.</p>
+				<div id="serverBadge" class="server-pill checking">Checking live bridge...</div>
 				<div class="hero-pill-row">
 					<span>sa/sb/ss</span>
 					<span>pa/pb</span>
@@ -34,6 +35,55 @@
 				<div class="panel-head">
 					<h2>Trace loader</h2>
 					<p>Paste values and operations or load a JSON trace exported by the tester.</p>
+				</div>
+
+				<div id="liveCard" class="live-card is-hidden">
+					<div class="live-status">
+						<div>
+							<h3>Live bridge</h3>
+							<p>Generate inputs, run your real binary, and replay the trace without leaving the browser.</p>
+						</div>
+						<strong id="liveStatusLabel">Server offline</strong>
+					</div>
+
+					<div class="live-grid">
+						<label class="field">
+							<span>Size</span>
+							<select id="liveSize" class="select-input">
+								<option value="3">3</option>
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="20" selected>20</option>
+								<option value="50">50</option>
+								<option value="100">100</option>
+								<option value="500">500</option>
+							</select>
+						</label>
+						<label class="field">
+							<span>Preset</span>
+							<select id="livePreset" class="select-input">
+								<option value="random" selected>Random</option>
+								<option value="reverse">Reverse</option>
+								<option value="almost-sorted">Almost sorted</option>
+								<option value="sorted">Sorted</option>
+							</select>
+						</label>
+					</div>
+
+					<div class="live-actions">
+						<button id="liveGenerate" class="action-btn primary">Generate &amp; Run</button>
+					</div>
+
+					<label class="field live-field">
+						<span>Custom input</span>
+						<input id="liveInput" class="text-input" type="text" placeholder="Example: 5 1 4 2 3">
+					</label>
+
+					<div class="live-actions">
+						<button id="liveRunCustom" class="action-btn">Run custom input</button>
+					</div>
+
+					<p id="liveMessage" class="live-message">Start <code>node tools/visualizer_server.mjs</code> to unlock live runs.</p>
 				</div>
 
 				<div class="field-grid">

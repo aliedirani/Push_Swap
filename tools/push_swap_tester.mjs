@@ -4,6 +4,18 @@ import { mkdirSync, existsSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
+const ANSI = {
+	reset: "\x1b[0m",
+	bold: "\x1b[1m",
+	dim: "\x1b[2m",
+	cyan: "\x1b[36m",
+	green: "\x1b[32m",
+	yellow: "\x1b[33m",
+	red: "\x1b[31m",
+	magenta: "\x1b[35m",
+	white: "\x1b[97m",
+};
+
 const ALLOWED_OPS = new Set([
 	"sa",
 	"sb",
@@ -23,6 +35,20 @@ const GRADE_LIMITS = {
 	500: [5500, 7000, 8500, 10000, 11500],
 };
 
+const OP_DESCRIPTIONS = {
+	sa: "swap top 2 of A",
+	sb: "swap top 2 of B",
+	ss: "swap both stacks",
+	pa: "push top of B to A",
+	pb: "push top of A to B",
+	ra: "rotate A upward",
+	rb: "rotate B upward",
+	rr: "rotate both stacks",
+	rra: "reverse rotate A",
+	rrb: "reverse rotate B",
+	rrr: "reverse rotate both stacks",
+};
+
 function parseArgs(argv)
 {
 	const options = {
@@ -40,6 +66,9 @@ function parseArgs(argv)
 		exportCsv: "",
 		preset: "random",
 		grade: false,
+		debug: false,
+		debugDelay: 120,
+		debugInput: "",
 		help: false,
 	};
 	let i;
@@ -75,6 +104,12 @@ function parseArgs(argv)
 			options.verbose = true;
 		else if (argv[i] === "--no-checker")
 			options.noChecker = true;
+		else if (argv[i] === "--debug")
+			options.debug = true;
+		else if (argv[i] === "--debug-delay")
+			options.debugDelay = Number(argv[++i]);
+		else if (argv[i] === "--debug-input")
+			options.debugInput = argv[++i];
 		else if (argv[i] === "--help" || argv[i] === "-h")
 			options.help = true;
 		else
@@ -85,6 +120,8 @@ function parseArgs(argv)
 		throw new Error("--size must be a positive integer");
 	if (!Number.isInteger(options.runs) || options.runs <= 0)
 		throw new Error("--runs must be a positive integer");
+	if (!Number.isInteger(options.debugDelay) || options.debugDelay < 0)
+		throw new Error("--debug-delay must be a non-negative integer");
 	if (options.min === null)
 		options.min = -options.size * 20;
 	if (options.max === null)
@@ -122,6 +159,9 @@ Options:
   --no-checker            Skip checker verification
   --quiet                 Hide per-run output
   --verbose               Print input samples during runs
+  --debug                 Animate one run in the terminal
+  --debug-delay <ms>      Delay between debug frames (default: 120)
+  --debug-input "<list>"  Space-separated integers for debug mode
   --help, -h              Show this help
 
 Examples:
@@ -129,6 +169,8 @@ Examples:
   node tools/push_swap_tester.mjs --size 500 --runs 20 --worst-trace visualizer/worst_trace.json
   node tools/push_swap_tester.mjs --preset almost-sorted --size 30 --runs 5 --export-trace visualizer/sample_trace.json
   node tools/push_swap_tester.mjs --size 100 --runs 50 --export-csv bench_100.csv
+  node tools/push_swap_tester.mjs --debug --debug-input "5 1 4 2 3"
+  node tools/push_swap_tester.mjs --debug --preset reverse --size 20 --debug-delay 80
 `);
 }
 
@@ -189,7 +231,7 @@ function makePresetSample(options)
 	let i;
 	let left;
 	let right;
-	let tmp;
+	let temp;
 
 	if (options.preset === "random")
 		return (base);
@@ -204,9 +246,9 @@ function makePresetSample(options)
 	{
 		left = Math.floor(Math.random() * Math.max(options.size - 1, 1));
 		right = Math.min(left + 1 + Math.floor(Math.random() * 2), options.size - 1);
-		tmp = base[left];
+		temp = base[left];
 		base[left] = base[right];
-		base[right] = tmp;
+		base[right] = temp;
 		i++;
 	}
 	return (base);
@@ -235,7 +277,6 @@ function runBinary(binaryPath, args, stdin)
 			maxBuffer: 1024 * 1024 * 32,
 		});
 	}
-
 	if (result.error)
 		throw result.error;
 	return ({
@@ -269,11 +310,13 @@ function validateOperations(operations)
 
 function checkerVerdict(checkerPath, sample, operations, options)
 {
-	if (options.noChecker || !checkerPath)
-		return ("SKIPPED");
-	const result = runBinary(checkerPath, sample.map(String), `${operations.join("\n")}\n`);
-	const verdict = result.stdout.trim();
+	let result;
+	let verdict;
 
+	if (options.noChecker || !checkerPath || !existsSync(checkerPath))
+		return ("SKIPPED");
+	result = runBinary(checkerPath, sample.map(String), `${operations.join("\n")}\n`);
+	verdict = result.stdout.trim();
 	if (result.status !== 0 && verdict !== "Error")
 		throw new Error(`checker exited with status ${result.status}\n${result.stderr}`);
 	return (verdict || "(no output)");
@@ -349,11 +392,14 @@ function buildFrequency(records)
 {
 	const counts = {};
 
-	ALLOWED_OPS.forEach((op) => {
+	ALLOWED_OPS.forEach((op) =>
+	{
 		counts[op] = 0;
 	});
-	records.forEach((record) => {
-		record.operations.forEach((op) => {
+	records.forEach((record) =>
+	{
+		record.operations.forEach((op) =>
+		{
 			counts[op]++;
 		});
 	});
@@ -362,7 +408,8 @@ function buildFrequency(records)
 
 function printOperationMix(counts)
 {
-	const entries = Object.entries(counts).sort((left, right) => {
+	const entries = Object.entries(counts).sort((left, right) =>
+	{
 		if (right[1] !== left[1])
 			return (right[1] - left[1]);
 		return (left[0].localeCompare(right[0]));
@@ -371,7 +418,8 @@ function printOperationMix(counts)
 
 	console.log("");
 	console.log("Operation mix");
-	entries.forEach(([op, count]) => {
+	entries.forEach(([op, count]) =>
+	{
 		const width = count === 0 ? 0 : Math.max(1, Math.round((count / maxCount) * 20));
 		const bar = "#".repeat(width).padEnd(20, " ");
 
@@ -425,7 +473,8 @@ function exportCsv(filePath, records, options)
 	];
 	const resolved = resolve(filePath);
 
-	records.forEach((record, index) => {
+	records.forEach((record, index) =>
+	{
 		rows.push([
 			index + 1,
 			options.size,
@@ -447,6 +496,219 @@ function formatSample(sample)
 	return (sample.join(" "));
 }
 
+function parseDebugInput(input)
+{
+	const values = input.trim().split(/[\s,]+/).filter(Boolean).map((token) => Number(token));
+
+	if (!values.length || values.some((value) => !Number.isInteger(value)))
+		throw new Error("--debug-input must contain only integers");
+	return (values);
+}
+
+function applyOperation(op, stackA, stackB)
+{
+	if (op === "sa" && stackA.length >= 2)
+		[stackA[0], stackA[1]] = [stackA[1], stackA[0]];
+	else if (op === "sb" && stackB.length >= 2)
+		[stackB[0], stackB[1]] = [stackB[1], stackB[0]];
+	else if (op === "ss")
+	{
+		applyOperation("sa", stackA, stackB);
+		applyOperation("sb", stackA, stackB);
+	}
+	else if (op === "pa" && stackB.length)
+		stackA.unshift(stackB.shift());
+	else if (op === "pb" && stackA.length)
+		stackB.unshift(stackA.shift());
+	else if (op === "ra" && stackA.length)
+		stackA.push(stackA.shift());
+	else if (op === "rb" && stackB.length)
+		stackB.push(stackB.shift());
+	else if (op === "rr")
+	{
+		applyOperation("ra", stackA, stackB);
+		applyOperation("rb", stackA, stackB);
+	}
+	else if (op === "rra" && stackA.length)
+		stackA.unshift(stackA.pop());
+	else if (op === "rrb" && stackB.length)
+		stackB.unshift(stackB.pop());
+	else if (op === "rrr")
+	{
+		applyOperation("rra", stackA, stackB);
+		applyOperation("rrb", stackA, stackB);
+	}
+}
+
+function isSortedStacks(stackA, stackB)
+{
+	let index;
+
+	if (stackB.length)
+		return (false);
+	index = 1;
+	while (index < stackA.length)
+	{
+		if (stackA[index - 1] > stackA[index])
+			return (false);
+		index++;
+	}
+	return (true);
+}
+
+function sleep(ms)
+{
+	return (new Promise((resolvePromise) =>
+	{
+		setTimeout(resolvePromise, ms);
+	}));
+}
+
+function terminalWidth()
+{
+	return (process.stdout.columns || 100);
+}
+
+function terminalHeight()
+{
+	return (process.stdout.rows || 30);
+}
+
+function colorForRank(rank, total)
+{
+	const ratio = total <= 1 ? 0 : rank / (total - 1);
+
+	if (ratio < 0.33)
+		return (ANSI.green);
+	if (ratio < 0.66)
+		return (ANSI.yellow);
+	return (ANSI.red);
+}
+
+function renderStackLines(stack, label, rankMap, totalCount, maxHeight, columnWidth)
+{
+	const lines = [];
+	let row;
+
+	lines.push(`${ANSI.bold}Stack ${label}${ANSI.reset}`.padEnd(columnWidth, " "));
+	lines.push("-".repeat(columnWidth));
+	row = 0;
+	while (row < maxHeight)
+	{
+		if (row < stack.length)
+		{
+			const value = stack[row];
+			const rank = rankMap.get(value) ?? 0;
+			const barWidth = Math.max(1, Math.round(((rank + 1) / Math.max(totalCount, 1)) * (columnWidth - 14)));
+			const marker = row === 0 ? `${ANSI.white}>${ANSI.reset}` : " ";
+			const bar = "*".repeat(barWidth).padEnd(columnWidth - 14, " ");
+			const number = String(value).padStart(8, " ");
+			const color = colorForRank(rank, totalCount);
+
+			lines.push(`${marker} ${color}${bar}${ANSI.reset} ${ANSI.dim}${number}${ANSI.reset}`);
+		}
+		else
+			lines.push(`${ANSI.dim}${".".repeat(columnWidth - 1)}${ANSI.reset}`);
+		row++;
+	}
+	lines.push("-".repeat(columnWidth));
+	lines.push(`${ANSI.dim}size: ${stack.length}${ANSI.reset}`.padEnd(columnWidth, " "));
+	return (lines);
+}
+
+let previousDebugLineCount = 0;
+
+function clearPreviousFrame()
+{
+	let index;
+
+	index = 0;
+	while (index < previousDebugLineCount)
+	{
+		process.stdout.write("\x1b[1A\x1b[2K");
+		index++;
+	}
+}
+
+function renderDebugFrame(stackA, stackB, operation, stepIndex, totalOps, rankMap)
+{
+	const frameLines = [];
+	const columnWidth = Math.max(28, Math.floor((terminalWidth() - 6) / 2));
+	const maxHeight = Math.max(8, Math.min(Math.max(stackA.length, stackB.length), terminalHeight() - 12));
+	const leftLines = renderStackLines(stackA, "A", rankMap, rankMap.size, maxHeight, columnWidth);
+	const rightLines = renderStackLines(stackB, "B", rankMap, rankMap.size, maxHeight, columnWidth);
+	const rowCount = Math.max(leftLines.length, rightLines.length);
+	let row;
+
+	if (previousDebugLineCount > 0)
+		clearPreviousFrame();
+	frameLines.push(
+		`${ANSI.bold}${ANSI.cyan}${operation === "init" ? "init" : operation}${ANSI.reset} ` +
+		`${ANSI.dim}${operation === "init" ? "initial state" : (OP_DESCRIPTIONS[operation] || "")}${ANSI.reset} ` +
+		`${ANSI.dim}[step ${stepIndex}/${totalOps}]${ANSI.reset}`
+	);
+	frameLines.push("");
+	row = 0;
+	while (row < rowCount)
+	{
+		frameLines.push(`  ${(leftLines[row] || "").padEnd(columnWidth, " ")}  ${(rightLines[row] || "")}`);
+		row++;
+	}
+	frameLines.push("");
+	if (stepIndex === totalOps)
+	{
+		frameLines.push(
+			isSortedStacks(stackA, stackB)
+				? `${ANSI.green}${ANSI.bold}[OK] Sorted in ${totalOps} operations${ANSI.reset}`
+				: `${ANSI.red}${ANSI.bold}[FAIL] Final state is not sorted${ANSI.reset}`
+		);
+		frameLines.push("");
+	}
+	process.stdout.write(frameLines.join("\n") + "\n");
+	previousDebugLineCount = frameLines.length + 1;
+}
+
+async function runDebugMode(options, pushSwapPath, checkerPath)
+{
+	const sample = options.debugInput
+		? parseDebugInput(options.debugInput)
+		: makePresetSample(options);
+	const run = runBinary(pushSwapPath, sample.map(String), "");
+	const operations = parseOperations(run.stdout);
+	const rankMap = new Map([...sample].sort((left, right) => left - right).map((value, index) => [value, index]));
+	const stackA = [...sample];
+	const stackB = [];
+	let stepIndex;
+
+	if (run.stderr.includes("Error"))
+		throw new Error("push_swap rejected the debug input");
+	if (run.status !== 0)
+		throw new Error(`push_swap exited with status ${run.status}`);
+	validateOperations(operations);
+	console.log("");
+	console.log(`${ANSI.bold}${ANSI.cyan}push_swap debug mode${ANSI.reset}`);
+	console.log(`${ANSI.dim}input: ${formatSample(sample)}${ANSI.reset}`);
+	console.log(`${ANSI.dim}${operations.length} operations, delay ${options.debugDelay}ms${ANSI.reset}`);
+	console.log("");
+	previousDebugLineCount = 0;
+	renderDebugFrame(stackA, stackB, "init", 0, operations.length, rankMap);
+	await sleep(Math.max(60, options.debugDelay * 2));
+	stepIndex = 0;
+	while (stepIndex < operations.length)
+	{
+		applyOperation(operations[stepIndex], stackA, stackB);
+		renderDebugFrame(stackA, stackB, operations[stepIndex], stepIndex + 1, operations.length, rankMap);
+		await sleep(options.debugDelay);
+		stepIndex++;
+	}
+	if (!options.noChecker && checkerPath)
+	{
+		const verdict = checkerVerdict(checkerPath, sample, operations, options);
+
+		console.log(`checker -> ${verdict}`);
+	}
+}
+
 function main()
 {
 	const options = parseArgs(process.argv.slice(2));
@@ -466,6 +728,15 @@ function main()
 		printHelp();
 		return ;
 	}
+	if (options.debug)
+	{
+		void runDebugMode(options, pushSwapPath, checkerPath).catch((error) =>
+		{
+			console.error(`Error: ${error.message}`);
+			process.exit(1);
+		});
+		return ;
+	}
 	console.log("push_swap tester");
 	console.log(`  push_swap: ${pushSwapPath}`);
 	console.log(`  checker:   ${options.noChecker ? "(skipped)" : checkerPath}`);
@@ -483,6 +754,11 @@ function main()
 		let verdict;
 		let line;
 
+		if (run.stderr.includes("Error"))
+		{
+			console.error(`Run ${runIndex + 1}: push_swap rejected generated input`);
+			process.exit(1);
+		}
 		if (run.status !== 0)
 		{
 			console.error(`Run ${runIndex + 1}: push_swap exited with status ${run.status}`);

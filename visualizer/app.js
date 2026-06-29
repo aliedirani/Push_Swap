@@ -32,6 +32,10 @@ const HISTOGRAM_ORDER = [
 	"rrr",
 ];
 
+const DEFAULT_SERVER_ORIGIN = window.location.protocol === "file:"
+	? "http://127.0.0.1:3000"
+	: window.location.origin;
+
 const elements = {
 	inputValues: document.querySelector("#inputValues"),
 	operations: document.querySelector("#operations"),
@@ -47,6 +51,15 @@ const elements = {
 	sortedValue: document.querySelector("#sortedValue"),
 	chunkInfo: document.querySelector("#chunkInfo"),
 	traceMeta: document.querySelector("#traceMeta"),
+	serverBadge: document.querySelector("#serverBadge"),
+	liveCard: document.querySelector("#liveCard"),
+	liveStatusLabel: document.querySelector("#liveStatusLabel"),
+	liveSize: document.querySelector("#liveSize"),
+	livePreset: document.querySelector("#livePreset"),
+	liveGenerate: document.querySelector("#liveGenerate"),
+	liveInput: document.querySelector("#liveInput"),
+	liveRunCustom: document.querySelector("#liveRunCustom"),
+	liveMessage: document.querySelector("#liveMessage"),
 	toStart: document.querySelector("#toStart"),
 	prevStep: document.querySelector("#prevStep"),
 	playPause: document.querySelector("#playPause"),
@@ -74,6 +87,8 @@ const state = {
 		title: SAMPLE_TRACE.title,
 		meta: null,
 	},
+	serverOrigin: DEFAULT_SERVER_ORIGIN,
+	serverOnline: false,
 };
 
 function getChunkSize(total)
@@ -149,13 +164,32 @@ function describeTrace()
 	const title = state.traceDetails.title || "Manual trace";
 
 	parts.push(title);
+	if (meta.source)
+		parts.push(meta.source);
 	if (meta.traceKind)
 		parts.push(`${meta.traceKind} export`);
 	if (meta.preset)
 		parts.push(`preset ${meta.preset}`);
+	if (meta.checker && meta.checker !== "(skipped)")
+		parts.push(`checker ${meta.checker}`);
 	parts.push(`${state.input.length} values`);
 	parts.push(`${state.operations.length} ops`);
 	return (parts.join(" · "));
+}
+
+async function fetchWithTimeout(url, options, timeoutMs)
+{
+	const controller = new AbortController();
+	const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+
+	try
+	{
+		return (await fetch(url, { ...options, signal: controller.signal }));
+	}
+	finally
+	{
+		window.clearTimeout(timer);
+	}
 }
 
 function createInitialStacks(values)
@@ -637,6 +671,133 @@ function readTraceFile(file)
 	reader.readAsText(file);
 }
 
+function setLiveMessage(message, tone)
+{
+	elements.liveMessage.textContent = message;
+	elements.liveMessage.classList.remove("is-good", "is-bad");
+	if (tone === "good")
+		elements.liveMessage.classList.add("is-good");
+	if (tone === "bad")
+		elements.liveMessage.classList.add("is-bad");
+}
+
+async function checkServer()
+{
+	try
+	{
+		const response = await fetchWithTimeout(`${state.serverOrigin}/status`, {}, 2000);
+		const payload = await response.json();
+
+		if (!response.ok)
+			throw new Error(payload.error || "status request failed");
+		state.serverOnline = true;
+		elements.serverBadge.textContent = "Live bridge online";
+		elements.serverBadge.className = "server-pill online";
+		elements.liveCard.classList.remove("is-hidden");
+		elements.liveStatusLabel.textContent = payload.pushSwap.exists ? "Ready to run" : "Build needed";
+		if (payload.pushSwap.exists)
+		{
+			setLiveMessage(
+				`Server ready at ${state.serverOrigin}. Generate a case or run a custom input.`,
+				"good"
+			);
+		}
+		else
+		{
+			setLiveMessage(
+				`push_swap was not found at ${payload.pushSwap.path}. Run make first.`,
+				"bad"
+			);
+		}
+	}
+	catch
+	{
+		state.serverOnline = false;
+		elements.serverBadge.textContent = "Live bridge offline";
+		elements.serverBadge.className = "server-pill offline";
+		elements.liveCard.classList.add("is-hidden");
+		elements.liveStatusLabel.textContent = "Server offline";
+	}
+}
+
+async function runLiveInput(input, preset)
+{
+	if (!state.serverOnline)
+	{
+		setLiveMessage("Start node tools/visualizer_server.mjs first.", "bad");
+		return ;
+	}
+	setLiveMessage("Running push_swap through the live bridge...");
+	try
+	{
+		const response = await fetchWithTimeout(`${state.serverOrigin}/run`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				input,
+				preset,
+			}),
+		}, 20000);
+		const payload = await response.json();
+
+		if (!response.ok)
+			throw new Error(payload.error || "run failed");
+		loadPayload(payload);
+		elements.liveInput.value = input.join(" ");
+		if (payload.alreadySorted)
+			setLiveMessage("Input was already sorted. Trace loaded with 0 operations.", "good");
+		else
+			setLiveMessage(`Loaded ${payload.totalOps} operations. Checker: ${payload.checker}.`, payload.checker === "OK" ? "good" : "bad");
+	}
+	catch (error)
+	{
+		setLiveMessage(`Live run failed: ${error.message}`, "bad");
+	}
+}
+
+async function handleLiveGenerate()
+{
+	if (!state.serverOnline)
+	{
+		setLiveMessage("The live bridge is offline.", "bad");
+		return ;
+	}
+	setLiveMessage("Generating an input from the live bridge...");
+	try
+	{
+		const params = new URLSearchParams({
+			size: elements.liveSize.value,
+			preset: elements.livePreset.value,
+		});
+		const response = await fetchWithTimeout(`${state.serverOrigin}/generate?${params.toString()}`, {}, 5000);
+		const payload = await response.json();
+
+		if (!response.ok)
+			throw new Error(payload.error || "generate failed");
+		await runLiveInput(payload.input, payload.preset);
+	}
+	catch (error)
+	{
+		setLiveMessage(`Generation failed: ${error.message}`, "bad");
+	}
+}
+
+async function handleLiveCustomRun()
+{
+	try
+	{
+		const values = parseNumbers(elements.liveInput.value);
+
+		await runLiveInput(values, "custom");
+	}
+	catch (error)
+	{
+		setLiveMessage(error.message, "bad");
+	}
+}
+
 function togglePlayPause()
 {
 	if (!state.history.length)
@@ -717,6 +878,14 @@ function bindKeyboardShortcuts()
 
 elements.loadManual.addEventListener("click", loadManualTrace);
 elements.loadSample.addEventListener("click", () => loadPayload(SAMPLE_TRACE));
+elements.liveGenerate.addEventListener("click", () =>
+{
+	void handleLiveGenerate();
+});
+elements.liveRunCustom.addEventListener("click", () =>
+{
+	void handleLiveCustomRun();
+});
 elements.traceFile.addEventListener("change", (event) =>
 {
 	const [file] = event.target.files;
@@ -761,3 +930,8 @@ elements.scrubber.addEventListener("input", () =>
 handleDropZone();
 bindKeyboardShortcuts();
 loadPayload(SAMPLE_TRACE);
+void checkServer();
+window.setInterval(() =>
+{
+	void checkServer();
+}, 8000);
