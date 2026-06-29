@@ -1,5 +1,6 @@
 .agents/
 suggestions/
+Suggestions/
 *.o
 push_swap
 checker

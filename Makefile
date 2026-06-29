@@ -15,7 +15,11 @@ BONUS_NAME	= checker
 
 CC		= cc
 CFLAGS		= -Wall -Wextra -Werror
+ifeq ($(OS),Windows_NT)
+RM		= cmd /C del /Q
+else
 RM		= rm -f
+endif
 
 # ---------------------------------------------------------------------------- #
 #  Main source files                                                            #

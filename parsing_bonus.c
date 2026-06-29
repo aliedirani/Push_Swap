@@ -31,6 +31,28 @@ static void	add_to_stack(t_data *data, char *str)
 	stack_add_back(&data->a, new);
 }
 
+static void	free_split_and_error(t_data *data, char **numbers)
+{
+	free_split(numbers);
+	error_exit(data);
+}
+
+static void	add_split_number(t_data *data, char **numbers, char *str)
+{
+	long	num;
+	t_stack	*new;
+
+	if (!str || str[0] == '\0' || !is_valid_number(str))
+		free_split_and_error(data, numbers);
+	num = ft_atoi(str);
+	if (num > INT_MAX || num < INT_MIN)
+		free_split_and_error(data, numbers);
+	new = stack_new((int)num);
+	if (!new)
+		free_split_and_error(data, numbers);
+	stack_add_back(&data->a, new);
+}
+
 /* Parse arguments from a single string. */
 static void	parse_string(t_data *data, char *str)
 {
@@ -49,7 +71,7 @@ static void	parse_string(t_data *data, char *str)
 	i = 0;
 	while (numbers[i])
 	{
-		add_to_stack(data, numbers[i]);
+		add_split_number(data, numbers, numbers[i]);
 		i++;
 	}
 	free_split(numbers);
